@@ -95,7 +95,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(404, "User dosn't exist");
   }
-  const isPaaswordValid = await user.isPasswordCorrect(password);
+  const isPaaswordValid = await user.isPasswordMatch(password);
   if (!isPaaswordValid) {
     throw new ApiError(401, "Invalid Credentials");
   }
@@ -114,13 +114,15 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
-      200,
-      {
-        user: loggedInUser,
-        accessToken,
-        refreshToken,
-      },
-      "User looged in successfully"
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "User looged in successfully"
+      )
     );
 });
 
